@@ -45,6 +45,57 @@
 
 	<build>
 		<plugins>
+			<!-- Добавленные -->
+			<!-- Jaxb-плагин для генерации java-классов из xsd-схемы в процессе компиляции -->
+			<!-- Для генерации классов из схем выполнить команду: mvn clean compile -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.6</version>
+				<!-- Можно одновременно генерить с помощью xjc классы из xsd и из wsdl при помощи разных execution -->
+				<executions>
+					<!--<execution>-->
+					<!--<id>generate-sri-facturas</id>-->
+					<!--<phase>generate-sources</phase>-->
+					<!--<goals>-->
+					<!--<goal>xjc</goal>-->
+					<!--</goals>-->
+					<!--<configuration>-->
+					<!--<outputDirectory>target/generated-sources/test_countries</outputDirectory>-->
+					<!--&lt;!&ndash;<packageName>${project.basedir}.countries</packageName>&ndash;&gt;-->
+					<!--<schemaDirectory>src/main/resources/schema/xsd</schemaDirectory>-->
+					<!--<schemaFiles>countries.xsd</schemaFiles>-->
+					<!--</configuration>-->
+					<!--</execution>-->
+					<execution>
+						<id>generate-sibur</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<!-- Локация, откуда будут читаться 'сырые' файлы xsd-схем, из которых будут генериться классы -->
+							<schemaDirectory>src/main/resources/schema/wsdl</schemaDirectory>
+							<!-- Локация, куда будут сгенерированы готовые java-классы из xsd-схем -->
+							<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+
+							<!--<packageName>${project.basedir}.sibur</packageName>-->
+
+							<!-- Нижеследущие два флага отвечают за генерацию из wsdl, вместо генерации из xsd -->
+							<wsdl>true</wsdl>
+							<xmlschema>false</xmlschema>
+
+							<!-- Указываем wsdl-файлы для генерации -->
+							<schemaFiles>SparkMarketingService.wsdl</schemaFiles>
+
+							<!-- Чтоб не затиралась директория, в которую складываем файлы -->
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Шаблонные -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
