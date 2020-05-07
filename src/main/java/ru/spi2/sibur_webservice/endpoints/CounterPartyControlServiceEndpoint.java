@@ -18,10 +18,11 @@ import ru.spi2.jaxws.datatypes.PutContractStatusResponse;
 import ru.spi2.jaxws.datatypes.SyncResponse;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 import java.util.List;
 
 @Endpoint
-public class CounterPartyControlServiceImplImpl  {
+public class CounterPartyControlServiceEndpoint {
 
 
     public SyncResponse checkAndSaveRegistrCounterpartySRMAsync(Header header, String registrreqGuid, Counterparty counterparty) {
@@ -39,9 +40,17 @@ public class CounterPartyControlServiceImplImpl  {
     //   public PutContractStatusResponse putContractStatus(@RequestPayload HeaderEntity headerEntity, @RequestPayload String contractId , @RequestPayload String approvalStage) {
     public JAXBElement<PutContractStatusResponse> putContractStatus(@RequestPayload JAXBElement<PutContractStatus> putContractStatusJAXBElement
             , MessageContext messageContext) {
-        System.out.println("");
-        System.out.println("asasas");
-        return null;
+
+        SyncResponse syncResponse = new SyncResponse();
+        syncResponse.setResultCode("111");
+        syncResponse.setResultMessage("Reise");
+
+        PutContractStatusResponse putContractStatusResponse = new PutContractStatusResponse();
+        putContractStatusResponse.setResponseSync(syncResponse);
+
+        QName qName = new QName("http://spi2.ru/jaxws/datatypes", "PutContractResponse");
+        JAXBElement<PutContractStatusResponse> jaxbElement = new JAXBElement<PutContractStatusResponse>(qName, PutContractStatusResponse.class, putContractStatusResponse);
+        return jaxbElement;
     }
 
 
