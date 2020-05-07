@@ -11,7 +11,7 @@
 	<groupId>ru.spi2</groupId>
 	<artifactId>sibur_webservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>sibur_webservice</name>
 	<description>Web service</description>
 
