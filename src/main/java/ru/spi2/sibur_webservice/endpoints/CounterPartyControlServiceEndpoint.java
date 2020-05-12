@@ -8,14 +8,12 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.spi2.jaxws.datatypes.CISTask;
 import ru.spi2.jaxws.datatypes.CheckAndSaveRegistrCounterpartySRMAsync;
 import ru.spi2.jaxws.datatypes.CheckAndSaveRegistrCounterpartySRMAsyncResponse;
-import ru.spi2.jaxws.datatypes.ConcurrentProcedure;
 import ru.spi2.jaxws.datatypes.ConcurrentProcedureConclusionRequestAsync;
 import ru.spi2.jaxws.datatypes.ConcurrentProcedureConclusionRequestAsyncResponse;
 import ru.spi2.jaxws.datatypes.Contract;
 import ru.spi2.jaxws.datatypes.ContractConclusionRequestAsync;
 import ru.spi2.jaxws.datatypes.ContractConclusionRequestAsyncResponse;
 import ru.spi2.jaxws.datatypes.Counterparty;
-import ru.spi2.jaxws.datatypes.CounterpartySapIdentities;
 import ru.spi2.jaxws.datatypes.Header;
 import ru.spi2.jaxws.datatypes.ObjectFactory;
 import ru.spi2.jaxws.datatypes.PutContractStatus;
@@ -26,14 +24,17 @@ import ru.spi2.jaxws.datatypes.PutHistoricalContracts;
 import ru.spi2.jaxws.datatypes.PutHistoricalContractsResponse;
 import ru.spi2.jaxws.datatypes.SyncResponse;
 import ru.spi2.sibur_webservice.constants.ResultCodesEnum;
-import ru.spi2.sibur_webservice.entities.BankDetailEntity;
 import ru.spi2.sibur_webservice.entities.ContractEntity;
+import ru.spi2.sibur_webservice.entities.RequestDataInfo;
 import ru.spi2.sibur_webservice.repositories.BankDetailEntityRepository;
 import ru.spi2.sibur_webservice.repositories.ContractEntityRepository;
+import ru.spi2.sibur_webservice.repositories.RequestDataRepository;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +47,33 @@ public class CounterPartyControlServiceEndpoint {
     @Resource
     private ContractEntityRepository contractEntityRepository;
 
+    @Resource
+    private RequestDataRepository requestDataRepository;
+
+    /**
+     * Создаем в бд серверную информацию о поступившем запросе:
+     *
+     * @param messageContext запрос к одному из методов api-сервиса.
+     */
+    private void writeRequestDataInfoToDb(MessageContext messageContext) {
+
+        String createDate = new Date().toString();
+
+        // Извлечение сырого xml из поступившего saop-сообщения
+        String rawXmlBodyAsString = null;
+        try (ByteArrayOutputStream sb = new ByteArrayOutputStream()){
+            messageContext.getRequest().writeTo(sb);
+            rawXmlBodyAsString = sb.toString("UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // В ячейке под индексом 1 - всегда имя текущего метода, а под индексом 2 - имя метода, вызвавшего текущий метод.
+        String calledServiceMethodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+
+        RequestDataInfo requestDataInfo = new RequestDataInfo(createDate, calledServiceMethodName, rawXmlBodyAsString);
+        requestDataRepository.save(requestDataInfo);
+    }
 
     /**
      * Метод, принимающий статус Договора с контрагентом для его обновления в системе.
@@ -70,6 +98,10 @@ public class CounterPartyControlServiceEndpoint {
 
         QName qName = new QName("http://spi2.ru/jaxws/datatypes", "PutContractResponse");
         JAXBElement<PutContractStatusResponse> jaxbElement = new JAXBElement<PutContractStatusResponse>(qName, PutContractStatusResponse.class, putContractStatusResponse);
+
+
+
+        writeRequestDataInfoToDb(messageContext);
         return jaxbElement;
     }
 
@@ -143,6 +175,7 @@ public class CounterPartyControlServiceEndpoint {
         // КИС , ее Контракта, лиц Контракта на not null и обязательные поля, прочий ФЛК
         //статус         VALIDATION_SUCCESS или VALIDATION_FAULT
 //        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createPutHistoricalContractsResponse(handlerStatus);
 
     }
@@ -208,6 +241,7 @@ public class CounterPartyControlServiceEndpoint {
         //статус         VALIDATION_SUCCESS или VALIDATION_FAULT
 //        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createContractConclusionRequestAsyncResponse(handlerStatus);
     }
 
@@ -343,6 +377,7 @@ public class CounterPartyControlServiceEndpoint {
         //@ToDo  5. Обновление записи по результатам валидации задачи
 //        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createCheckAndSaveRegistrCounterpartySRMAsyncResponse(handlerStatus);
     }
 
@@ -392,6 +427,8 @@ public class CounterPartyControlServiceEndpoint {
         handlerStatus.setResponseSync(syncResponse);
 
         //@ToDo  5. Обновление записи по результатам валидации задачи
+
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createPutCounterpartyInfoResponse(handlerStatus);
     }
 
@@ -441,6 +478,7 @@ public class CounterPartyControlServiceEndpoint {
         //@ToDo  5. Обновление записи по результатам валидации задачи
         handlerStatus.setResponseSync(syncResponse);
 
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createConcurrentProcedureConclusionRequestAsyncResponse(handlerStatus);
     }
 }

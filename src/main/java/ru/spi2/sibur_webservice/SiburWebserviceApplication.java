@@ -7,9 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan
 @EnableAutoConfiguration
-@PropertySource(value = {
-		"file:config/application.properties",
-})
+
 public class SiburWebserviceApplication {
 
 	public static void main(String[] args) {
