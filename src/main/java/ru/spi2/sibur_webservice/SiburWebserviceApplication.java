@@ -7,11 +7,14 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan
 @EnableAutoConfiguration
-
+@PropertySource(value = {
+        "classpath:application.properties",
+        "file:config/application.properties"},
+        ignoreResourceNotFound = true)
 public class SiburWebserviceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SiburWebserviceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SiburWebserviceApplication.class, args);
+    }
 
 }
