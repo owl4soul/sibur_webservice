@@ -1,11 +1,12 @@
 package ru.spi2.sibur_webservice.entities;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
+import java.util.Date;
 
 @Entity
 public class RequestDataInfo {
@@ -15,27 +16,28 @@ public class RequestDataInfo {
     @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ", allocationSize = 1)
     private Long id;
 
-    private String createDate;
+    private Date createDate;
+
 
     private String seviceMethodName;
 
-    @Column(length = 4000)
+    @Lob
     private String xmlBody;
 
     public RequestDataInfo() {
     }
 
-    public RequestDataInfo(String createDate, String seviceMethodName, String xmlBody) {
+    public RequestDataInfo(Date createDate, String seviceMethodName, String xmlBody) {
         this.createDate = createDate;
         this.seviceMethodName = seviceMethodName;
         this.xmlBody = xmlBody;
     }
 
-    public String getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 

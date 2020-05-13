@@ -57,7 +57,6 @@ public class CounterPartyControlServiceEndpoint {
      */
     private void writeRequestDataInfoToDb(MessageContext messageContext) {
 
-        String createDate = new Date().toString();
 
         // Извлечение сырого xml из поступившего saop-сообщения
         String rawXmlBodyAsString = null;
@@ -71,7 +70,7 @@ public class CounterPartyControlServiceEndpoint {
         // В ячейке под индексом 1 - всегда имя текущего метода, а под индексом 2 - имя метода, вызвавшего текущий метод.
         String calledServiceMethodName = Thread.currentThread().getStackTrace()[2].getMethodName();
 
-        RequestDataInfo requestDataInfo = new RequestDataInfo(createDate, calledServiceMethodName, rawXmlBodyAsString);
+        RequestDataInfo requestDataInfo = new RequestDataInfo(new Date(), calledServiceMethodName, rawXmlBodyAsString);
         requestDataRepository.save(requestDataInfo);
     }
 
