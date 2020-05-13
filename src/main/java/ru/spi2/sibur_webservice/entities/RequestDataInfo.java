@@ -6,54 +6,56 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
 public class RequestDataInfo {
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "id_Sequence")
-    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ", allocationSize = 1)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_Sequence")
+	@SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ", allocationSize = 1)
+	private Long id;
 
-    private Date createDate;
+	@Temporal(TemporalType.DATE)
+	private Date createDate;
 
+	private String seviceMethodName;
 
-    private String seviceMethodName;
+	@Lob
+	private String xmlBody;
 
-    @Lob
-    private String xmlBody;
+	public RequestDataInfo() {
+	}
 
-    public RequestDataInfo() {
-    }
+	public RequestDataInfo(Date createDate, String seviceMethodName, String xmlBody) {
+		this.createDate = createDate;
+		this.seviceMethodName = seviceMethodName;
+		this.xmlBody = xmlBody;
+	}
 
-    public RequestDataInfo(Date createDate, String seviceMethodName, String xmlBody) {
-        this.createDate = createDate;
-        this.seviceMethodName = seviceMethodName;
-        this.xmlBody = xmlBody;
-    }
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	public String getSeviceMethodName() {
+		return seviceMethodName;
+	}
 
-    public String getSeviceMethodName() {
-        return seviceMethodName;
-    }
+	public void setSeviceMethodName(String seviceMethodName) {
+		this.seviceMethodName = seviceMethodName;
+	}
 
-    public void setSeviceMethodName(String seviceMethodName) {
-        this.seviceMethodName = seviceMethodName;
-    }
+	public String getXmlBody() {
+		return xmlBody;
+	}
 
-    public String getXmlBody() {
-        return xmlBody;
-    }
-
-    public void setXmlBody(String xmlBody) {
-        this.xmlBody = xmlBody;
-    }
+	public void setXmlBody(String xmlBody) {
+		this.xmlBody = xmlBody;
+	}
 }
