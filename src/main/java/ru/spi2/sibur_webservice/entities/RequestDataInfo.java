@@ -6,11 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
+@Table(name = "SPI_WS_RAW_DATA")
 public class RequestDataInfo {
 
 	@Id
