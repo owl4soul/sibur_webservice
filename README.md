@@ -31,7 +31,7 @@ CounterpartyControlService
 @%JAVA_EXE% -version
 @start "sibur_ws" /B %JAVA_EXE% -Xms1g -Xmx1g -cp "./sibur_apvka.jar;./lib/*" org.springframework.boot.loader.JarLauncher
 
-Где ibur_apvka.jar - имя джарника из пункта 2.1
+Где sibur_apvka.jar - имя джарника из пункта 2.1
 
 3. Создать файл настроек приложения sibur_appvka/config/application.properties по аналогии с дефолтным:
 {user.home}/IdeaProjects/sibur_webservice/src/main/resources/default/default_application.properties 
