@@ -12,7 +12,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.config.annotation.WsConfigurerAdapter;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
-import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
+import org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition;
+import org.springframework.ws.wsdl.wsdl11.Wsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
 
@@ -42,14 +43,26 @@ public class WebServiceConfig extends WsConfigurerAdapter {
      * Бин DefaultWsdl11Definition.
      * Это предоставляет стандарт WSDL 1.1 с использованием XsdSchema. Имя WSDL будет таким же, как имя бина.
      */
-    @Bean(name = "ias_data_types")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
-        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
-        wsdl11Definition.setPortTypeName("CounterpartyControlServicePort");
-        wsdl11Definition.setLocationUri("/ws");
-        wsdl11Definition.setTargetNamespace("http://spi2.ru/jaxws/datatypes");
-        wsdl11Definition.setSchema(countriesSchema);
-        return wsdl11Definition;
+//    @Bean(name = "ias_data_types")
+//    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
+//        DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
+//        wsdl11Definition.setPortTypeName("CounterpartyControlServicePort");
+//        wsdl11Definition.setLocationUri("/ws");
+//        wsdl11Definition.setTargetNamespace("http://spi2.ru/jaxws/datatypes");
+//        wsdl11Definition.setSchema(countriesSchema);
+//        return wsdl11Definition;
+//    }
+
+    /**
+     * Благодаря этому можно просмотреть wsdl в браузере по ссылке вида:
+     * http://localhost:8081/ws/CounterpartyControlService.wsdl
+     */
+    @Bean(name = "CounterpartyControlService")
+    public Wsdl11Definition simpleWsdl11Definition() {
+        SimpleWsdl11Definition simpleWsdl11Definition = new SimpleWsdl11Definition();
+        simpleWsdl11Definition.setWsdl(new ClassPathResource("schema/wsdl/CounterpartyControlService.wsdl"));
+
+        return simpleWsdl11Definition;
     }
 
     /**
