@@ -719,7 +719,7 @@
     </binding>
     <service name="CounterpartyControlService">
         <port name="CounterpartyControlServicePort" binding="tns:CounterpartyControlServicePortBinding">
-            <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+            <soap:address location="http://s001as-irulegf1:4080/ws/CounterpartyControlService?wsdl"/>
         </port>
     </service>
 </definitions>
