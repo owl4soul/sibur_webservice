@@ -74,35 +74,35 @@ public class CounterPartyControlServiceEndpoint {
         requestDataRepository.save(requestDataInfo);
     }
 
-    /**
-     * Метод, принимающий статус Договора с контрагентом для его обновления в системе.
-     */
-    @PayloadRoot(localPart = "PutContractStatus", namespace = "http://spi2.ru/jaxws/datatypes")
-    @ResponsePayload
-    //   public PutContractStatusResponse putContractStatus(@RequestPayload HeaderEntity headerEntity, @RequestPayload String contractId , @RequestPayload String approvalStage) {
-    public JAXBElement<PutContractStatusResponse> putContractStatus(@RequestPayload JAXBElement<PutContractStatus> putContractStatusJAXBElement
-            , MessageContext messageContext) {
-
-        ContractEntity contractEntity = new ContractEntity();
-        contractEntity.setApprovalStage("APPROVED");
-
-//        contractEntityRepository.save(contractEntity);
-
-        SyncResponse syncResponse = new SyncResponse();
-        syncResponse.setResultCode(ResultCodesEnum.success.name());
-        syncResponse.setResultMessage("Ответ сформирован в " + new Date());
-
-        PutContractStatusResponse putContractStatusResponse = new PutContractStatusResponse();
-        putContractStatusResponse.setResponseSync(syncResponse);
-
-        QName qName = new QName("http://spi2.ru/jaxws/datatypes", "PutContractResponse");
-        JAXBElement<PutContractStatusResponse> jaxbElement = new JAXBElement<PutContractStatusResponse>(qName, PutContractStatusResponse.class, putContractStatusResponse);
-
-
-
-        writeRequestDataInfoToDb(messageContext);
-        return jaxbElement;
-    }
+//    /**
+//     * Метод, принимающий статус Договора с контрагентом для его обновления в системе.
+//     */
+//    @PayloadRoot(localPart = "PutContractStatus", namespace = "http://spi2.ru/jaxws/datatypes")
+//    @ResponsePayload
+//    //   public PutContractStatusResponse putContractStatus(@RequestPayload HeaderEntity headerEntity, @RequestPayload String contractId , @RequestPayload String approvalStage) {
+//    public JAXBElement<PutContractStatusResponse> putContractStatus(@RequestPayload JAXBElement<PutContractStatus> putContractStatusJAXBElement
+//            , MessageContext messageContext) {
+//
+//        ContractEntity contractEntity = new ContractEntity();
+//        contractEntity.setApprovalStage("APPROVED");
+//
+////        contractEntityRepository.save(contractEntity);
+//
+//        SyncResponse syncResponse = new SyncResponse();
+//        syncResponse.setResultCode(ResultCodesEnum.success.name());
+//        syncResponse.setResultMessage("Ответ сформирован в " + new Date());
+//
+//        PutContractStatusResponse putContractStatusResponse = new PutContractStatusResponse();
+//        putContractStatusResponse.setResponseSync(syncResponse);
+//
+//        QName qName = new QName("http://spi2.ru/jaxws/datatypes", "PutContractResponse");
+//        JAXBElement<PutContractStatusResponse> jaxbElement = new JAXBElement<PutContractStatusResponse>(qName, PutContractStatusResponse.class, putContractStatusResponse);
+//
+//
+//
+//        writeRequestDataInfoToDb(messageContext);
+//        return jaxbElement;
+//    }
 
     /**
      * ================= К И С ====================================
@@ -244,72 +244,73 @@ public class CounterPartyControlServiceEndpoint {
         return objectFactory.createContractConclusionRequestAsyncResponse(handlerStatus);
     }
 
-//    // @WebMethod(operationName = "PutContractStatus")
-//    // @WebResult(name = "ResponseSync", targetNamespace = "http://spi2.ru/jaxws/datatypes", partName = "response")
-//    @PayloadRoot(localPart = "PutContractStatus", namespace = "http://spi2.ru/jaxws/datatypes")
-//    @ResponsePayload
-//    //   public PutContractStatusResponse putContractStatus(@RequestPayload HeaderEntity headerEntity, @RequestPayload String contractId , @RequestPayload String approvalStage) {
-//    public JAXBElement<PutContractStatusResponse> putContractStatus(@RequestPayload JAXBElement<PutContractStatus> putContractStatusJAXBElement
-//            , MessageContext messageContext) {
-//
-//        ObjectFactory objectFactory = new ObjectFactory();
-//        PutContractStatusResponse handlerStatus = objectFactory.createPutContractStatusResponse();
-//        String mess = " ";
-//        SyncResponse syncResponse = objectFactory.createSyncResponse();
-//        syncResponse.setResultCode(ResultCodesEnum.success.name());
-//
-//        // @ToDo  1. Сохранение по приему со статусом PERSIST_RAW_DATA_DONE
-////        soapMessageStageProcessService.saveBeforeHandle(messageContext);
-//
-//        if (putContractStatusJAXBElement != null &&
-//                putContractStatusJAXBElement.getValue() != null) {
-//
-//            // @ToDo 2. Валидация  на not null и обязательные поля, прочий ФЛК - тут всего 3 поля
-//            String contractId = putContractStatusJAXBElement.getValue().getContractId();
-//            String status = putContractStatusJAXBElement.getValue().getApprovalStage();
-//            if (contractId == null) {
-//                mess += " Получен пустой идентификатор контракта ";
-//                syncResponse.setResultCode(ResultCodesEnum.failure.name());
-//            }
-//            if (status == null) {
-//                mess += " Получен пустой статус ";
-//                syncResponse.setResultCode(ResultCodesEnum.failure.name());
-//            }
-//
-//            Header header = putContractStatusJAXBElement.getValue().getHeader();
-//            if (header != null) {
-//
-//                //@ToDo 3.  Обновление записи телом почтового сообщения
-//                // ****
-//
-//                //@ToDo 4. Подготовка сообщения для синхронного ответа
-//
-//                mess += " Получен новый статус " + status + " по  договору с идентификатором " + contractId + ". ";
-//                mess += " Запрос " + header.getRequestid() + " от " + header.getRequestdate() + ".";
-//                syncResponse.setResultMessage(mess);
-//
-//            } else {
-//                mess += " Запрос содержит пустой заголовок. ";
-//                syncResponse.setResultCode(ResultCodesEnum.failure.name());
-//            }
-//
-//        } else {
-//            mess = " Пустой запрос";
-//            syncResponse = objectFactory.createSyncResponse();
-//            syncResponse.setResultCode(ResultCodesEnum.failure.name());
-//
-//        }
-//
-//        syncResponse.setResultMessage(mess);
-//        handlerStatus.setResponseSync(syncResponse);
-//
-//        //@ToDo  5. Обновление записи по результатам валидации задачи
-//        // КИС , ее Контракта, лиц Контракта на not null и обязательные поля, прочий ФЛК
-//        //статус         VALIDATION_SUCCESS или VALIDATION_FAULT
-////        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
-//
-//        return objectFactory.createPutContractStatusResponse(handlerStatus);
-//    }
+    // @WebMethod(operationName = "PutContractStatus")
+    // @WebResult(name = "ResponseSync", targetNamespace = "http://spi2.ru/jaxws/datatypes", partName = "response")
+    @PayloadRoot(localPart = "PutContractStatus", namespace = "http://spi2.ru/jaxws/datatypes")
+    @ResponsePayload
+    //   public PutContractStatusResponse putContractStatus(@RequestPayload HeaderEntity headerEntity, @RequestPayload String contractId , @RequestPayload String approvalStage) {
+    public JAXBElement<PutContractStatusResponse> putContractStatus(@RequestPayload JAXBElement<PutContractStatus> putContractStatusJAXBElement
+            , MessageContext messageContext) {
+
+        ObjectFactory objectFactory = new ObjectFactory();
+        PutContractStatusResponse handlerStatus = objectFactory.createPutContractStatusResponse();
+        String mess = " ";
+        SyncResponse syncResponse = objectFactory.createSyncResponse();
+        syncResponse.setResultCode(ResultCodesEnum.success.name());
+
+        // @ToDo  1. Сохранение по приему со статусом PERSIST_RAW_DATA_DONE
+//        soapMessageStageProcessService.saveBeforeHandle(messageContext);
+
+        if (putContractStatusJAXBElement != null &&
+                putContractStatusJAXBElement.getValue() != null) {
+
+            // @ToDo 2. Валидация  на not null и обязательные поля, прочий ФЛК - тут всего 3 поля
+            String contractId = putContractStatusJAXBElement.getValue().getContractId();
+            String status = putContractStatusJAXBElement.getValue().getApprovalStage();
+            if (contractId == null) {
+                mess += " Получен пустой идентификатор контракта ";
+                syncResponse.setResultCode(ResultCodesEnum.failure.name());
+            }
+            if (status == null) {
+                mess += " Получен пустой статус ";
+                syncResponse.setResultCode(ResultCodesEnum.failure.name());
+            }
+
+            Header header = putContractStatusJAXBElement.getValue().getHeader();
+            if (header != null) {
+
+                //@ToDo 3.  Обновление записи телом почтового сообщения
+                // ****
+
+                //@ToDo 4. Подготовка сообщения для синхронного ответа
+
+                mess += " Получен новый статус " + status + " по  договору с идентификатором " + contractId + ". " +
+                        "Ответ сформирован в " + new Date();
+                mess += " Запрос " + header.getRequestid() + " от " + header.getRequestdate() + ".";
+                syncResponse.setResultMessage(mess);
+
+            } else {
+                mess += " Запрос содержит пустой заголовок. ";
+                syncResponse.setResultCode(ResultCodesEnum.failure.name());
+            }
+
+        } else {
+            mess = " Пустой запрос";
+            syncResponse = objectFactory.createSyncResponse();
+            syncResponse.setResultCode(ResultCodesEnum.failure.name());
+
+        }
+
+        syncResponse.setResultMessage(mess);
+        handlerStatus.setResponseSync(syncResponse);
+
+        //@ToDo  5. Обновление записи по результатам валидации задачи
+        // КИС , ее Контракта, лиц Контракта на not null и обязательные поля, прочий ФЛК
+        //статус         VALIDATION_SUCCESS или VALIDATION_FAULT
+//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
+
+        return objectFactory.createPutContractStatusResponse(handlerStatus);
+    }
 
     /**
      * ================= Сообщения SAP SRM. Регистрация участника и cогласование участника на этапах конкуррентной процедуры  ========================
