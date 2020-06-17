@@ -24,15 +24,13 @@ import ru.spi2.jaxws.datatypes.PutHistoricalContracts;
 import ru.spi2.jaxws.datatypes.PutHistoricalContractsResponse;
 import ru.spi2.jaxws.datatypes.SyncResponse;
 import ru.spi2.sibur_webservice.constants.ResultCodesEnum;
-import ru.spi2.sibur_webservice.entities.ContractEntity;
-import ru.spi2.sibur_webservice.entities.RequestDataInfo;
+import ru.spi2.sibur_webservice.entities.SpiWsRawData;
 import ru.spi2.sibur_webservice.repositories.BankDetailEntityRepository;
 import ru.spi2.sibur_webservice.repositories.ContractEntityRepository;
-import ru.spi2.sibur_webservice.repositories.RequestDataRepository;
+import ru.spi2.sibur_webservice.repositories.SpiWsRawDataRepository;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -48,7 +46,7 @@ public class CounterPartyControlServiceEndpoint {
     private ContractEntityRepository contractEntityRepository;
 
     @Resource
-    private RequestDataRepository requestDataRepository;
+    private SpiWsRawDataRepository spiWsRawDataRepository;
 
     /**
      * Создаем в бд серверную информацию о поступившем запросе:
@@ -70,8 +68,9 @@ public class CounterPartyControlServiceEndpoint {
         // В ячейке под индексом 1 - всегда имя текущего метода, а под индексом 2 - имя метода, вызвавшего текущий метод.
         String calledServiceMethodName = Thread.currentThread().getStackTrace()[2].getMethodName();
 
-        RequestDataInfo requestDataInfo = new RequestDataInfo(new Date(), calledServiceMethodName, rawXmlBodyAsString);
-        requestDataRepository.save(requestDataInfo);
+        Date currentDateNow = new Date();
+        SpiWsRawData spiWsRawData = new SpiWsRawData(currentDateNow, SpiWsRawData.ServiceMethod.valueOf(calledServiceMethodName), rawXmlBodyAsString, SpiWsRawData.ProcessingStatus.INSERTED, currentDateNow);
+        spiWsRawDataRepository.save(spiWsRawData);
     }
 
 //    /**
@@ -309,6 +308,7 @@ public class CounterPartyControlServiceEndpoint {
         //статус         VALIDATION_SUCCESS или VALIDATION_FAULT
 //        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
+        writeRequestDataInfoToDb(messageContext);
         return objectFactory.createPutContractStatusResponse(handlerStatus);
     }
 
