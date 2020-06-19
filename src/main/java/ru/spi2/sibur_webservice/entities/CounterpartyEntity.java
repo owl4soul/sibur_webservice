@@ -10,9 +10,9 @@ package ru.spi2.sibur_webservice.entities;
 
 
 
-import ru.spi2.jaxws.datatypes.CompanyForeign;
-import ru.spi2.jaxws.datatypes.CompanyRus;
-import ru.spi2.jaxws.datatypes.Counterparty;
+import ru.spi2.sibur_webservice.generated.ru.spi2.jaxws.datatypes.CompanyForeign;
+import ru.spi2.sibur_webservice.generated.ru.spi2.jaxws.datatypes.CompanyRus;
+import ru.spi2.sibur_webservice.generated.ru.spi2.jaxws.datatypes.Counterparty;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
