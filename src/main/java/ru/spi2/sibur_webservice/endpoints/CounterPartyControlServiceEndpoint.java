@@ -253,7 +253,11 @@ public class CounterPartyControlServiceEndpoint {
 		//статус         VALIDATION_SUCCESS или VALIDATION_FAULT
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
-//		writeRequestDataInfoToDb(messageContext);
+		try {
+			writeRequestDataInfoToDb(contractConclusionRequestAsyncJAXBElement);
+		} catch (JAXBException e) {
+			e.printStackTrace(); // TODO обработка
+		}
 		return objectFactory.createContractConclusionRequestAsyncResponse(handlerStatus);
 	}
 
@@ -398,7 +402,11 @@ public class CounterPartyControlServiceEndpoint {
 		//@ToDo  5. Обновление записи по результатам валидации задачи
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
-//		writeRequestDataInfoToDb(messageContext);
+		try {
+			writeRequestDataInfoToDb(checkAndSaveRegistrCounterpartySRMAsyncJAXBElement);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 		return objectFactory.createCheckAndSaveRegistrCounterpartySRMAsyncResponse(handlerStatus);
 	}
 
@@ -451,7 +459,11 @@ public class CounterPartyControlServiceEndpoint {
 
 		//@ToDo  5. Обновление записи по результатам валидации задачи
 
-//		writeRequestDataInfoToDb(messageContext);
+		try {
+			writeRequestDataInfoToDb(putCounterpartyInfoJAXBElement);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 		return objectFactory.createPutCounterpartyInfoResponse(handlerStatus);
 	}
 
@@ -503,7 +515,11 @@ public class CounterPartyControlServiceEndpoint {
 		//@ToDo  5. Обновление записи по результатам валидации задачи
 		handlerStatus.setResponseSync(syncResponse);
 
-//		writeRequestDataInfoToDb(messageContext);
+		try {
+			writeRequestDataInfoToDb(concurrentProcedureConclusionRequestAsyncJAXBElement);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 		return objectFactory.createConcurrentProcedureConclusionRequestAsyncResponse(handlerStatus);
 	}
 }
