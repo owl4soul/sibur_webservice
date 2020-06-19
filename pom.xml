@@ -107,6 +107,12 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+
 			<!-- ПЛАГИН CXF - включить при необходимости перегенерации классов по wsdl в папку target-->
 			<!-- Сгенерированные классы я вручную переношу в папку проекта:
 			 ru.spi2.sibur_webservice.generated.ru.spi2.jaxws.datatypes-->
@@ -115,10 +121,6 @@
 			(по-крайней мере, средствами cxf, поэтому они добавлены мной вручную для всех 6-ти параметров реквестов-->
 			<!--&lt;!&ndash; Плагин CXF - парсит файлы (в том числе wsdl),-->
 			<!--из которых генерятся классы в target/generated-sources&ndash;&gt;-->
-			<!--<plugin>-->
-				<!--<groupId>org.springframework.boot</groupId>-->
-				<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-			<!--</plugin>-->
 			<!--<plugin>-->
 				<!--<groupId>de.codecentric</groupId>-->
 				<!--<artifactId>cxf-spring-boot-starter-maven-plugin</artifactId>-->
