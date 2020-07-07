@@ -1,5 +1,7 @@
 package ru.spi2.sibur_webservice.entities;
 
+import ru.spi2.sibur_webservice.constants.ResultCodesEnum;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,15 +51,25 @@ public class SpiWsRawData {
 	@Column(name = "STATUS_CHANGED_DATE")
 	private Date statusChangedDate;
 
+	@Lob
+	@Column(name = "REQUEST_MESSAGE")
+	private String requestMessage;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "SYNC_REQUEST_RESULT")
+	private ResultCodesEnum syncRequestResult;
+
 	public SpiWsRawData() {
 	}
 
-	public SpiWsRawData(Date createDate, ServiceMethod seviceMethodName, String xmlBody, ProcessingStatus processingStatus, Date statusChangedDate) {
+	public SpiWsRawData(Date createDate, ServiceMethod seviceMethodName, String xmlBody, ProcessingStatus processingStatus, Date statusChangedDate, String requestMessage, ResultCodesEnum syncRequestResult) {
 		this.createDate = createDate;
 		this.seviceMethodName = seviceMethodName;
 		this.xmlBody = xmlBody;
 		this.processingStatus = processingStatus;
 		this.statusChangedDate = statusChangedDate;
+		this.requestMessage = requestMessage;
+		this.syncRequestResult = syncRequestResult;
 	}
 
 	public Date getCreateDate() {
@@ -103,6 +115,22 @@ public class SpiWsRawData {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getRequestMessage() {
+		return requestMessage;
+	}
+
+	public void setRequestMessage(String requestMessage) {
+		this.requestMessage = requestMessage;
+	}
+
+	public ResultCodesEnum getSyncRequestResult() {
+		return syncRequestResult;
+	}
+
+	public void setSyncRequestResult(ResultCodesEnum syncRequestResult) {
+		this.syncRequestResult = syncRequestResult;
 	}
 
 	/**

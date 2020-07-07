@@ -36,6 +36,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +62,7 @@ public class CounterPartyControlServiceEndpoint {
 	 *
 	 * @param jaxbElement объект в обертке, поступивший на сервер в параметре реквеста.
 	 */
-	private void writeRequestDataInfoToDb(JAXBElement jaxbElement) throws JAXBException {
+	private void writeRequestDataInfoToDb(JAXBElement jaxbElement, MessageContext messageContext, ResultCodesEnum syncRequestResult) throws JAXBException {
 
 		StringWriter sw = new StringWriter();
 		JAXBContext context = JAXBContext.newInstance(jaxbElement.getDeclaredType());
@@ -69,13 +71,22 @@ public class CounterPartyControlServiceEndpoint {
 		m.marshal(jaxbElement.getValue(), sw);
 		String rawXmlBodyAsString = sw.toString();
 
+		// Извлечение сырого xml из поступившего в запросе saop-сообщения
+		String requestMessage = null;
+		try (ByteArrayOutputStream sb = new ByteArrayOutputStream()){
+			messageContext.getRequest().writeTo(sb);
+			requestMessage = sb.toString("UTF-8");
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
 		// В ячейке под индексом 1 - всегда имя текущего метода, а под индексом 2 - имя метода, вызвавшего текущий метод.
 		String calledServiceMethodName = Thread.currentThread().getStackTrace()[2].getMethodName();
 
 		Date currentDateNow = new Date();
 		SpiWsRawData spiWsRawData =
 				new SpiWsRawData(currentDateNow, SpiWsRawData.ServiceMethod.valueOf(calledServiceMethodName),
-								 rawXmlBodyAsString, SpiWsRawData.ProcessingStatus.INSERTED, currentDateNow);
+								 rawXmlBodyAsString, SpiWsRawData.ProcessingStatus.INSERTED, currentDateNow, requestMessage, syncRequestResult);
 		spiWsRawDataRepository.save(spiWsRawData);
 	}
 
@@ -180,7 +191,8 @@ public class CounterPartyControlServiceEndpoint {
 		//статус         VALIDATION_SUCCESS или VALIDATION_FAULT
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 		try {
-			writeRequestDataInfoToDb(putHistoricalContractsJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(putHistoricalContractsJAXBElement, messageContext, requestResult);
 		} catch (JAXBException e) {
 			String errorMessage = "Произошла ошибка при попытке преобразования объекта в xml-представление";
 			LOGGER.info(errorMessage);
@@ -254,7 +266,8 @@ public class CounterPartyControlServiceEndpoint {
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
 		try {
-			writeRequestDataInfoToDb(contractConclusionRequestAsyncJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(contractConclusionRequestAsyncJAXBElement, messageContext, requestResult);
 		} catch (JAXBException e) {
 			e.printStackTrace(); // TODO обработка
 		}
@@ -327,7 +340,8 @@ public class CounterPartyControlServiceEndpoint {
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
 		try {
-			writeRequestDataInfoToDb(putContractStatusJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(putContractStatusJAXBElement, messageContext, requestResult);
 		} catch (JAXBException e) {
 			String errorMessage = "Произошла ошибка при попытке преобразования объекта в xml-представление";
 			LOGGER.info(errorMessage);
@@ -403,7 +417,8 @@ public class CounterPartyControlServiceEndpoint {
 		//        soapMessageStageProcessService.updateAfterHandle(messageContext, syncResponse);
 
 		try {
-			writeRequestDataInfoToDb(checkAndSaveRegistrCounterpartySRMAsyncJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(checkAndSaveRegistrCounterpartySRMAsyncJAXBElement, messageContext, requestResult);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -460,7 +475,8 @@ public class CounterPartyControlServiceEndpoint {
 		//@ToDo  5. Обновление записи по результатам валидации задачи
 
 		try {
-			writeRequestDataInfoToDb(putCounterpartyInfoJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(putCounterpartyInfoJAXBElement, messageContext, requestResult);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -516,7 +532,9 @@ public class CounterPartyControlServiceEndpoint {
 		handlerStatus.setResponseSync(syncResponse);
 
 		try {
-			writeRequestDataInfoToDb(concurrentProcedureConclusionRequestAsyncJAXBElement);
+			ResultCodesEnum requestResult = ResultCodesEnum.valueOf(syncResponse.getResultCode());
+			writeRequestDataInfoToDb(concurrentProcedureConclusionRequestAsyncJAXBElement, messageContext,
+									 requestResult);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
